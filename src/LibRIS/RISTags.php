@@ -2,31 +2,35 @@
 
 namespace LibRIS;
 
-class RISTags {
+class RISTags
+{
+    public static function getTags()
+    {
+        return array_keys(self::$tagMap);
+    }
 
-  public static function getTags() {
-    return array_keys(self::$tagMap);
-  }
+    public static function getTypes()
+    {
+        return array_keys(self::$typeMap);
+    }
 
-  public static function getTypes() {
-    return array_keys(self::$typeMap);
-  }
+    public static function describeTag($tag)
+    {
+        return self::$tagMap[$tag];
+    }
 
-  public static function describeTag($tag) {
-    return self::$tagMap[$tag];
-  }
+    public static function describeType($type)
+    {
+        return self::$typeMap[$type];
+    }
 
-  public static function describeType($type) {
-    return self::$typeMap[$type];
-  }
-
-  /**
-   * The definitive list of all fields.
-   * @var array
-   * @see http://en.wikipedia.org/wiki/RIS_%28file_format%29
-   * @see http://www.refman.com/support/risformat_intro.asp
-   */
-   public static $tagMap = array(
+    /**
+     * The definitive list of all fields.
+     * @var array
+     * @see http://en.wikipedia.org/wiki/RIS_%28file_format%29
+     * @see http://www.refman.com/support/risformat_intro.asp
+     */
+    public static $tagMap = array(
      'TY' => 'Type of reference',
      'A1' => 'First author',
      'A2' => 'Secondary author',
@@ -109,7 +113,7 @@ class RISTags {
      'ER' => 'End of reference',
    );
 
-  public static $tagDescriptions = array(
+    public static $tagDescriptions = array(
     'TY' => 'Type of reference (must be the first tag)',
     'A1' => 'First author',
     'A2' => 'Secondary author (each author on its own line preceded by the tag)',
@@ -192,13 +196,13 @@ class RISTags {
     'ER' => 'End of reference (must be the last tag)',
   );
 
-  /**
-   * Map of all types (tag TY) defined for RIS.
-   * @var array
-   * @see http://en.wikipedia.org/wiki/RIS_%28file_format%29
-   * @see http://www.refman.com/support/risformat_intro.asp
-   */
-  public static $typeMap = array(
+    /**
+     * Map of all types (tag TY) defined for RIS.
+     * @var array
+     * @see http://en.wikipedia.org/wiki/RIS_%28file_format%29
+     * @see http://www.refman.com/support/risformat_intro.asp
+     */
+    public static $typeMap = array(
     'ABST' => 'Abstract',
     'ADVS' => 'Audiovisual material',
     'AGGR' => 'Aggregated database',

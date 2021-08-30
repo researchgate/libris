@@ -3,7 +3,6 @@
 namespace LibRIS;
 
 use PHPUnit\Framework\TestCase;
-use function file_get_contents;
 
 class RisWriterTest extends TestCase
 {
