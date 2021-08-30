@@ -64,7 +64,7 @@ class RISReader
 
     protected $data = null;
 
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
     }
 
@@ -116,16 +116,16 @@ class RISReader
      */
     protected function parseArray($lines)
     {
-        $recordset = array();
+        $recordset = [];
 
         // Do any cleaning and normalizing.
         $this->cleanData($lines);
 
-        $record = array();
+        $record = [];
         $lastTag = null;
         foreach ($lines as $line) {
             $line = trim($line);
-            $matches = array();
+            $matches = [];
 
             preg_match(self::LINE_REGEX, $line, $matches);
             if (!empty($matches[3])) {
@@ -136,7 +136,7 @@ class RISReader
             elseif (!empty($matches[2]) && $matches[2] === 'ER') {
                 $lastTag = null;
                 $recordset[] = $record;
-                $record = array();
+                $record = [];
             } elseif (!empty($matches[4])) {
                 // Append to the last one.
                 // We skip leading info (like BOMs).

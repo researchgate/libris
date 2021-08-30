@@ -30,7 +30,7 @@ class RISTags
      * @see http://en.wikipedia.org/wiki/RIS_%28file_format%29
      * @see http://www.refman.com/support/risformat_intro.asp
      */
-    public static $tagMap = array(
+    public static $tagMap = [
      'TY' => 'Type of reference',
      'A1' => 'First author',
      'A2' => 'Secondary author',
@@ -111,9 +111,9 @@ class RISTags
      'Y1' => 'Primary date',
      'Y2' => 'Access date',
      'ER' => 'End of reference',
-   );
+   ];
 
-    public static $tagDescriptions = array(
+    public static $tagDescriptions = [
     'TY' => 'Type of reference (must be the first tag)',
     'A1' => 'First author',
     'A2' => 'Secondary author (each author on its own line preceded by the tag)',
@@ -194,7 +194,7 @@ class RISTags
     'Y1' => 'Primary date',
     'Y2' => 'Access date',
     'ER' => 'End of reference (must be the last tag)',
-  );
+  ];
 
     /**
      * Map of all types (tag TY) defined for RIS.
@@ -202,7 +202,7 @@ class RISTags
      * @see http://en.wikipedia.org/wiki/RIS_%28file_format%29
      * @see http://www.refman.com/support/risformat_intro.asp
      */
-    public static $typeMap = array(
+    public static $typeMap = [
     'ABST' => 'Abstract',
     'ADVS' => 'Audiovisual material',
     'AGGR' => 'Aggregated database',
@@ -258,5 +258,5 @@ class RISTags
     'THES' => 'Thesis/Dissertation',
     'UNPB' => 'Unpublished work',
     'VIDEO' => 'Video recording',
-  );
+  ];
 }

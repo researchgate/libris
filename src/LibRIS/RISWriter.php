@@ -33,7 +33,7 @@ class RISWriter
      */
     public function writeRecords($records)
     {
-        $buffer = array();
+        $buffer = [];
         foreach ($records as $record) {
             $buffer[] = $this->writeRecord($record);
         }
@@ -52,7 +52,7 @@ class RISWriter
      */
     public function writeRecord($tags)
     {
-        $buffer = array();
+        $buffer = [];
         $fmt = '%s  - %s';
 
         $buffer[] = sprintf($fmt, 'TY', $tags['TY'][0]);
