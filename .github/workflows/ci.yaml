@@ -18,5 +18,4 @@ jobs:
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v2
         with:
-          config: phpunit.xml
           php_version: 7.4
