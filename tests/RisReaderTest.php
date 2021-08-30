@@ -32,7 +32,7 @@ class RisReaderTest extends TestCase
                     'PB' => ['University of Toronto Press'],
                     'PY' => ['1997/12/31/'],
                     'SN' => ['0802078060, 9780802078063'],
-                ]
+                ],
             ],
             $this->ris->getRecords()
         );
