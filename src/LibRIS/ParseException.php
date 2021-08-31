@@ -1,3 +1,7 @@
 <?php
+
 namespace LibRIS;
-class ParseException extends \Exception {}
+
+class ParseException extends \Exception
+{
+}

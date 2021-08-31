@@ -57,136 +57,143 @@ namespace LibRIS;
  * ?>
  * @endcode
  */
-class RISReader {
+class RISReader
+{
+    public const RIS_EOL = "\r\n";
+    public const LINE_REGEX = '/^(([A-Z1-9]{2})\s+-(.*))|(.*)$/';
 
-  const RIS_EOL = "\r\n";
-  const LINE_REGEX = '/^(([A-Z1-9]{2})\s+-(.*))|(.*)$/';
+    protected $data = null;
 
-  protected $data = NULL;
-
-  public function __construct($options = array()) {
-
-  }
-
-  /**
-   * Parse an RIS file.
-   *
-   * This will parse the file and return a data structure representing the
-   * record.
-   *
-   * @param string $filename
-   *  The full path to the file to parse.
-   * @param StreamContext $context
-   *  The stream context (in desired) for handling the file.
-   * @retval array
-   *  An indexed array of individual sources, each of which is an 
-   *  associative array of entry details. (See LibRIS)
-   */
-  public function parseFile($filename, $context = NULL) {
-    if (!is_file($filename)) {
-      throw new ParseException(sprintf('File %s not found.', htmlentities($filename)));
+    public function __construct($options = [])
+    {
     }
-    $flags = FILE_SKIP_EMPTY_LINES | FILE_TEXT;
-    $contents = file($filename, $flags, $context);
 
-    $this->parseArray($contents);
-  }
-
-  /**
-   * Parse a string of RIS data.
-   *
-   * This will parse an RIS record into a representative data structure.
-   *
-   * @param string $string
-   *  RIS-formatted data in a string.
-   * @param StreamContext $context
-   *  The stream context (in desired) for handling the file.
-   * @retval array
-   *  An indexed array of individual sources, each of which is an 
-   *  associative array of entry details. (See {@link LibRIS})
-   */
-  public function parseString($string) {
-    $contents = explode (RISReader::RIS_EOL, $string);
-    $this->parseArray($contents);
-  }
-
-  /**
-   * Take an array of lines and parse them into an RIS record.
-   */
-  protected function parseArray($lines) {
-    $recordset = array();
-
-    // Do any cleaning and normalizing.
-    $this->cleanData($lines);
-
-    $record = array();
-    $lastTag = NULL;
-    foreach ($lines as $line) {
-      $line = trim($line);
-      $matches = array();
-
-      preg_match(self::LINE_REGEX, $line, $matches);
-      if (!empty($matches[3])) {
-        $lastTag = $matches[2];
-        $record[$matches[2]][] = trim($matches[3]);
-      }
-      // End record and prep a new one.
-      elseif (!empty($matches[2]) && $matches[2] == 'ER') {
-        $lastTag = NULL;
-        $recordset[] = $record;
-        $record = array();
-      }
-      elseif (!empty($matches[4])) {
-        // Append to the last one.
-        // We skip leading info (like BOMs).
-        if (!empty($lastTag)) {
-          $lastEntry = count($record[$lastTag]) - 1;
-          // We trim because some encoders add tabs or multiple spaces.
-          // Standard is silent on how this should be handled.
-          $record[$lastTag][$lastEntry] .= ' ' . trim($matches[4]);
+    /**
+     * Parse an RIS file.
+     *
+     * This will parse the file and return a data structure representing the
+     * record.
+     *
+     * @param string $filename
+     *  The full path to the file to parse.
+     * @param resource $context
+     *  The stream context (in desired) for handling the file.
+     * @retval array
+     *  An indexed array of individual sources, each of which is an
+     *  associative array of entry details. (See LibRIS)
+     */
+    public function parseFile($filename, $context = null)
+    {
+        if (!is_file($filename)) {
+            throw new ParseException(sprintf('File %s not found.', htmlentities($filename)));
         }
-      }
+        $flags = FILE_SKIP_EMPTY_LINES | FILE_TEXT;
+        $contents = file($filename, $flags, $context);
+
+        $this->parseArray($contents);
     }
-    if (!empty($record)) $recordset[] = $record;
 
-    $this->data = $recordset;
-  }
+    /**
+     * Parse a string of RIS data.
+     *
+     * This will parse an RIS record into a representative data structure.
+     *
+     * @param string $string
+     *  RIS-formatted data in a string.
+     *
+     * @retval array
+     *  An indexed array of individual sources, each of which is an
+     *  associative array of entry details. (See {@link LibRIS})
+     */
+    public function parseString($string)
+    {
+        $contents = explode(RISReader::RIS_EOL, $string);
+        $this->parseArray($contents);
+    }
 
-  public function getRecords() {
-    return $this->data;
-  }
+    /**
+     * Take an array of lines and parse them into an RIS record.
+     */
+    protected function parseArray($lines)
+    {
+        $recordset = [];
 
-  public function printRecords() {
-    $format = "%s:\n\t%s\n";
-    foreach ($this->data as $record) {
-      foreach ($record as $key => $values) {
-        foreach ($values as $value) {
-          printf($format, RISTags::describeTag($key), $value);
+        // Do any cleaning and normalizing.
+        $this->cleanData($lines);
+
+        $record = [];
+        $lastTag = null;
+        foreach ($lines as $line) {
+            $line = trim($line);
+            $matches = [];
+
+            preg_match(self::LINE_REGEX, $line, $matches);
+            if (!empty($matches[3])) {
+                $lastTag = $matches[2];
+                $record[$matches[2]][] = trim($matches[3]);
+            }
+            // End record and prep a new one.
+            elseif (!empty($matches[2]) && $matches[2] === 'ER') {
+                $lastTag = null;
+                $recordset[] = $record;
+                $record = [];
+            } elseif (!empty($matches[4])) {
+                // Append to the last one.
+                // We skip leading info (like BOMs).
+                if (!empty($lastTag)) {
+                    /** @phan-suppress-next-line PhanTypeInvalidDimOffset */
+                    $lastEntry = count($record[$lastTag]) - 1;
+                    // We trim because some encoders add tabs or multiple spaces.
+                    // Standard is silent on how this should be handled.
+                    $record[$lastTag][$lastEntry] .= ' ' . trim($matches[4]);
+                }
+            }
         }
-      }
+        if (!empty($record)) {
+            $recordset[] = $record;
+        }
 
-      print PHP_EOL;
+        $this->data = $recordset;
     }
-  }
 
-  /**
-   * Clean up the data before processing.
-   *
-   * @param array $lines
-   *   Indexed array of lines of data.
-   */
-  protected function cleanData(&$lines) {
-
-    if (empty($lines)) return;
-
-    // Currently, we only need to strip a BOM if it exists.
-    // Thanks to Derik Badman (http://madinkbeard.com/) for finding the
-    // bug and suggesting this fix:
-    // http://blog.philipp-michels.de/?p=32
-    $first = $lines[0];
-    if (substr($first, 0, 3) == pack('CCC', 0xef, 0xbb, 0xbf)) {
-      $lines[0] = substr($first, 3);
+    public function getRecords()
+    {
+        return $this->data;
     }
-  }
 
+    public function printRecords()
+    {
+        $format = "%s:\n\t%s\n";
+        foreach ($this->data as $record) {
+            foreach ($record as $key => $values) {
+                foreach ($values as $value) {
+                    printf($format, RISTags::describeTag($key), $value);
+                }
+            }
+
+            print PHP_EOL;
+        }
+    }
+
+    /**
+     * Clean up the data before processing.
+     *
+     * @param array $lines
+     *   Indexed array of lines of data.
+     */
+    protected function cleanData(&$lines)
+    {
+        if (empty($lines)) {
+            return;
+        }
+
+        // Currently, we only need to strip a BOM if it exists.
+        // Thanks to Derik Badman (http://madinkbeard.com/) for finding the
+        // bug and suggesting this fix:
+        // http://blog.philipp-michels.de/?p=32
+        $first = $lines[0];
+        if (substr($first, 0, 3) == pack('CCC', 0xef, 0xbb, 0xbf)) {
+            $lines[0] = substr($first, 3);
+        }
+    }
 }
