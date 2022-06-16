@@ -12,9 +12,9 @@ return [
     // If this is set to `null`,
     // then Phan assumes the PHP version which is closest to the minor version
     // of the php executable used to execute Phan.
-    'target_php_version' => '7.4',
+    'target_php_version' => '8.0',
 
-    'minimum_target_php_version' => '7.3',
+    'minimum_target_php_version' => '7.4',
 
     'backward_compatibility_checks' => true,
 
