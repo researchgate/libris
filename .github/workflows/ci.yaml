@@ -43,3 +43,6 @@ jobs:
 
       - name: Test with psalm
         run: vendor/bin/psalm
+
+      - name: Test with phpstan
+        run: vendor/bin/phpstan.phar
