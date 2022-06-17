@@ -40,3 +40,6 @@ jobs:
 
       - name: Test with phan
         run: vendor/bin/phan
+
+      - name: Test with psalm
+        run: vendor/bin/psalm

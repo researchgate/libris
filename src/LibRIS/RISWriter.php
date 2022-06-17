@@ -19,10 +19,6 @@ namespace LibRIS;
  */
 class RISWriter
 {
-    public function __construct()
-    {
-    }
-
     /**
      * Write a series of records to a single RIS string.
      *
@@ -31,7 +27,7 @@ class RISWriter
      * @retval string
      *  The record as a string.
      */
-    public function writeRecords($records)
+    public function writeRecords($records): string
     {
         $buffer = [];
         foreach ($records as $record) {
@@ -50,7 +46,7 @@ class RISWriter
      * @retval string
      *  The record as a string.
      */
-    public function writeRecord($tags)
+    public function writeRecord($tags): string
     {
         $buffer = [];
         $fmt = '%s  - %s';

@@ -4,24 +4,30 @@ namespace LibRIS;
 
 class RISTags
 {
-    public static function getTags()
+    /**
+     * @retval string[]
+     */
+    public static function getTags(): array
     {
         return array_keys(self::$tagMap);
     }
 
-    public static function getTypes()
+    /**
+     * @retval string[]
+     */
+    public static function getTypes(): array
     {
         return array_keys(self::$typeMap);
     }
 
-    public static function describeTag($tag)
+    public static function describeTag(string $tag): ?string
     {
-        return self::$tagMap[$tag];
+        return self::$tagMap[$tag] ?? null;
     }
 
-    public static function describeType($type)
+    public static function describeType(string $type): ?string
     {
-        return self::$typeMap[$type];
+        return self::$typeMap[$type] ?? null;
     }
 
     /**
@@ -113,6 +119,7 @@ class RISTags
      'ER' => 'End of reference',
    ];
 
+    /** @var array<string, string> */
     public static $tagDescriptions = [
     'TY' => 'Type of reference (must be the first tag)',
     'A1' => 'First author',
