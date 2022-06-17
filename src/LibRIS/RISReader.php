@@ -62,11 +62,7 @@ class RISReader
     public const RIS_EOL = "\r\n";
     public const LINE_REGEX = '/^(([A-Z1-9]{2})\s+-(.*))|(.*)$/';
 
-    protected $data = null;
-
-    public function __construct($options = [])
-    {
-    }
+    protected ?array $data = null;
 
     /**
      * Parse an RIS file.
@@ -78,16 +74,15 @@ class RISReader
      *  The full path to the file to parse.
      * @param resource $context
      *  The stream context (in desired) for handling the file.
-     * @retval array
-     *  An indexed array of individual sources, each of which is an
-     *  associative array of entry details. (See LibRIS)
      */
-    public function parseFile($filename, $context = null)
+    public function parseFile(string $filename, $context = null): void
     {
         if (!is_file($filename)) {
             throw new ParseException(sprintf('File %s not found.', htmlentities($filename)));
         }
         $flags = FILE_SKIP_EMPTY_LINES | FILE_TEXT;
+
+        /** @psalm-suppress PossiblyNullArgument */
         $contents = file($filename, $flags, $context);
 
         $this->parseArray($contents);
@@ -100,12 +95,8 @@ class RISReader
      *
      * @param string $string
      *  RIS-formatted data in a string.
-     *
-     * @retval array
-     *  An indexed array of individual sources, each of which is an
-     *  associative array of entry details. (See {@link LibRIS})
      */
-    public function parseString($string)
+    public function parseString(string $string): void
     {
         $contents = explode(RISReader::RIS_EOL, $string);
         $this->parseArray($contents);
@@ -113,8 +104,10 @@ class RISReader
 
     /**
      * Take an array of lines and parse them into an RIS record.
+     *
+     * @param string[] $lines
      */
-    protected function parseArray($lines)
+    protected function parseArray(array $lines): void
     {
         $recordset = [];
 
@@ -156,18 +149,18 @@ class RISReader
         $this->data = $recordset;
     }
 
-    public function getRecords()
+    public function getRecords(): ?array
     {
         return $this->data;
     }
 
-    public function printRecords()
+    public function printRecords(): void
     {
         $format = "%s:\n\t%s\n";
-        foreach ($this->data as $record) {
+        foreach ($this->data ?? [] as $record) {
             foreach ($record as $key => $values) {
                 foreach ($values as $value) {
-                    printf($format, RISTags::describeTag($key), $value);
+                    printf($format, RISTags::describeTag($key) ?? '', $value);
                 }
             }
 
@@ -181,7 +174,7 @@ class RISReader
      * @param array $lines
      *   Indexed array of lines of data.
      */
-    protected function cleanData(&$lines)
+    protected function cleanData(array &$lines): void
     {
         if (empty($lines)) {
             return;
