@@ -80,7 +80,7 @@ class RISReader
         if (!is_file($filename)) {
             throw new ParseException(sprintf('File %s not found.', htmlentities($filename)));
         }
-        $flags = FILE_SKIP_EMPTY_LINES | FILE_TEXT;
+        $flags = FILE_SKIP_EMPTY_LINES;
 
         /** @psalm-suppress PossiblyNullArgument */
         $contents = file($filename, $flags, $context);
